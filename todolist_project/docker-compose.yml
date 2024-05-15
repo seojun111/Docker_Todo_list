@@ -1,0 +1,22 @@
+# Docker Compose 파일의 버전을 3으로 지정
+version: '3'
+
+services:
+  # web 서비스 정의
+  web:
+    build: . # 현재 디렉토리에 있는 Dockerfile을 사용하여 이미지 빌드
+    command: python manage.py runserver 0.0.0.0:8000 # 컨테이너가 시작될 때 실행할 명령 지정, 0.0.0.0:8000 에서 실행
+    volumes:
+      - .:/app # 현재 디렉토리를 컨테이너의 /app 에 마운트
+    ports:
+      - "8000:8000" # 호스트의 포트 8000을 컨테이너의 포트 8000에 바인딩
+    depends_on:
+      - db # db가 먼저 시작되고 초기화 후 web 서비스가 시작되도록 설정
+
+  # db 서비스 정의
+  db:
+    image: postgres:latest # 공식 PostgreSQL 이미지를 사용 (최신 버전)
+    environment: # PostgreSQL 컨테이너에서 사용할 환경 변수를 설정
+      POSTGRES_DB: mydatabase # 데이터베이스의 이름을 mydatabase로 설정
+      POSTGRES_USER: myuser # 사용자 이름을 myuser로 설정
+      POSTGRES_PASSWORD: mypassword # 사용자 비밀번호를 mypassword로 설정
